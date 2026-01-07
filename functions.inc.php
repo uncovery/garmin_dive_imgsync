@@ -87,7 +87,8 @@ function matchPhotosToDivesAndUpdate($photos, $divesData) {
     $default_data = array(
         'depth' => '', 
         'gps_lat' => '', 
-        'gps_lon' => '', 
+        'gps_lon' => '',
+        'temp' => '',
         'fit_file' => '', 
         'dive_start' => '',
         'dive_end' => '', 
@@ -150,11 +151,13 @@ function matchPhotosToDivesAndUpdate($photos, $divesData) {
         }
 
         $depth = (float)$measurement['a'];
-        $temp  = isset($measurement['b']) ? (float)$measurement['b'] : null;
+        if (isset($measurement['b'])) {
+            $temp = round($measurement['b'], 1);
+        }
         
         // Store depth and time difference for report
         $new_photos[$photoIndex]['depth'] = round($depth, 2);
-        $new_photos[$photoIndex]['temp']  = $temp !== null ? round($temp, 1) : '';
+        $new_photos[$photoIndex]['temp'] = $temp;
         $new_photos[$photoIndex]['time_diff'] = $timeDifference;
         
         // Store GPS data for report if available
