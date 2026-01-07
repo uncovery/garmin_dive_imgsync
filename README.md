@@ -1,20 +1,27 @@
 # garmin_dive_imgsync
 syncronize garmin dive data into Lightroom images
 
+# the problem:
+* You have a dive watch that records depth and GPS for every dive
+* You take pictures that could be geotagged with that GPS data and the depth information
+* doing this manually is tedious.
+
 ## what this does:
 This script helps you write the GPS and depth data from your garmin dive watch into
-the photo metadata that you took during a dive, fully automated. 
-It also creates JSON files from your dive for further data processing.
-JPGs exported from RAW files will include the metadata stored in the file
+the photo metadata for each photo you took during a dive, fully automated. 
+It also creates JSON files from your dive with selected dive data for further data processing.
+The information then visible in lightroom and can be included in JPG metadata on export
+Many programs will show the geotagged images correctly on maps.
+You will know at which depth you took which photo.
 
 ## installation
 * download the code here
 * download the Garmin FitCVSTool.jar from https://developer.garmin.com/fit/download/
 * save the Garmin .jar in the same folder as the code here.
-* Windows Linux Subsystem (see here: https://learn.microsoft.com/en-us/windows/wsl/install)
+* install the Windows Linux Subsystem (see here: https://learn.microsoft.com/en-us/windows/wsl/install)
 * rename the config.inc.default.php to config.inc.php
 * create a dedicated folder for FIT, CSV and JSON files (can be the same or 3 different folders)
-* edit the file to match your environment
+* edit the config file to match your environment
 
 ## usage
 * download the garmin FIT files for your dives from Garmin connect:
