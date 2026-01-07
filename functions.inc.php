@@ -716,7 +716,7 @@ function checks() {
     global $CONF;
     
     if (!file_exists('config.inc.php')) {
-        echo "ATTENTION: edit config.inc.default.php and rename it to config.inc.php before proceedinG";
+        echo "ATTENTION: edit config.inc.default.php and rename it to config.inc.php before proceeding";
         die();
     }
 
