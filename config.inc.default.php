@@ -8,13 +8,13 @@ $CONF = array(
 'fitCsvToolPath' => './FitCSVTool.jar',
 
 // The folder location where you have your original photos with they XMP files
-'photoFolder' => '/mnt/e/Sync/photography/DCIM Diving/2025/12 - Anantara',
+'photoFolder' => '/mnt/c/DCIM',
 
 // The folder where you downloaded your .FIT files to
-'fitFolder' => '/mnt/e/Sync/Code/dive watch data/2025-12 Anantara',
+'fitFolder' => '/mnt/c/fitfiles',
 
 // We need to store an intermediate CVS file. Choose a folder where they will be stored
-'csvOutputDir' => '/mnt/e/Sync/Code/Wordpress/unc_divelog/data/fit_cvs',
+'csvOutputDir' => '/mnt/c/cvsfiles',
 
 // How many datapoints you want to collect into the JSON file? If there are too many, 
 // enter 10 for 1 every 10 seconds, 0 for all data
@@ -24,7 +24,7 @@ $CONF = array(
 'required_data' => ['depth', 'temperature'],
 
 // Where do you want to store the JSON Files?
-'jsonOutputDir' => '/mnt/e/Sync/Code/dive watch data/Json',
+'jsonOutputDir' => '/mnt/c/jsonfiles',
 
 // Do you want to generate a detailes report in the ende?
 'generateReport' => true, // Set to true to generate CSV report

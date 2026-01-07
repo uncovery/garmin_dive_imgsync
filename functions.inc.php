@@ -94,13 +94,18 @@ function matchPhotosToDivesAndUpdate($photos, $divesData) {
         'time_diff' => '', 
         'matched_dive' => false,
     );
+    $new_photos = array();
     
     foreach ($photos as $photoIndex => $photo) {
+        $new_photos[$photoIndex] = $default_data;
+        $new_photos[$photoIndex]['time'] = $photo['time'];
+        $new_photos[$photoIndex]['xmp'] = $photo['xmp'];
+        $new_photos[$photoIndex]['image'] = $photo['image'];
+        
         $photoTime = $photo['time'];
         $filename = basename($photo['xmp']);
         $photoTimeFormatted = $photoTime->format('Y-m-d H:i:s e');
         // Initialize photo data for report with default values
-        $photos[$photoIndex] = $default_data;
         
         // Find which dive this photo belongs to
         $matchingDive = null;
@@ -111,12 +116,12 @@ function matchPhotosToDivesAndUpdate($photos, $divesData) {
 
             if ($photoTime >= $diveStart && $photoTime <= $diveEnd) {
                 $matchingDive = $dive;
-                $photos[$photoIndex]['matched_dive'] = true;
+                $new_photos[$photoIndex]['matched_dive'] = true;
                 
                 // Store dive information for report (even if we skip updating)
-                $photos[$photoIndex]['fit_file'] = $matchingDive['fit_file'];
-                $photos[$photoIndex]['dive_start'] = $matchingDive['start_time']->format('Y-m-d H:i:s e');
-                $photos[$photoIndex]['dive_end'] = $matchingDive['end_time']->format('Y-m-d H:i:s e');
+                $new_photos[$photoIndex]['fit_file'] = $matchingDive['fit_file'];
+                $new_photos[$photoIndex]['dive_start'] = $matchingDive['start_time']->format('Y-m-d H:i:s e');
+                $new_photos[$photoIndex]['dive_end'] = $matchingDive['end_time']->format('Y-m-d H:i:s e');
                 break;
             }
         }
@@ -125,7 +130,7 @@ function matchPhotosToDivesAndUpdate($photos, $divesData) {
             echo "⚠️ SKIPPED: $filename - Not within any dive time window (photo time: $photoTimeFormatted)\n";
             $results['skipped']++;
             // Ensure matched_dive is explicitly set to false
-            $photos[$photoIndex]['matched_dive'] = false;
+            $new_photos[$photoIndex]['matched_dive'] = false;
             continue;
         }
         
@@ -148,14 +153,14 @@ function matchPhotosToDivesAndUpdate($photos, $divesData) {
         $temp  = isset($measurement['b']) ? (float)$measurement['b'] : null;
         
         // Store depth and time difference for report
-        $photos[$photoIndex]['depth'] = round($depth, 2);
-        $photos[$photoIndex]['temp']  = $temp !== null ? round($temp, 1) : '';
-        $photos[$photoIndex]['time_diff'] = $timeDifference;
+        $new_photos[$photoIndex]['depth'] = round($depth, 2);
+        $new_photos[$photoIndex]['temp']  = $temp !== null ? round($temp, 1) : '';
+        $new_photos[$photoIndex]['time_diff'] = $timeDifference;
         
         // Store GPS data for report if available
         if ($matchingDive['gps_data']) {
-            $photos[$photoIndex]['gps_lat'] = $matchingDive['gps_data']['lat_decimal'] ?? $matchingDive['gps_data']['latitude'];
-            $photos[$photoIndex]['gps_lon'] = $matchingDive['gps_data']['lon_decimal'] ?? $matchingDive['gps_data']['longitude'];
+            $new_photos[$photoIndex]['gps_lat'] = $matchingDive['gps_data']['lat_decimal'] ?? $matchingDive['gps_data']['latitude'];
+            $new_photos[$photoIndex]['gps_lon'] = $matchingDive['gps_data']['lon_decimal'] ?? $matchingDive['gps_data']['longitude'];
         }
         
         // Skip if already has depth and GPS and we're not updating existing ones
@@ -165,7 +170,7 @@ function matchPhotosToDivesAndUpdate($photos, $divesData) {
         if ($skipDueToDepth && $skipDueToGPS) {
             echo "⚠️ SKIPPED: $filename - Already has depth and GPS information (photo time: $photoTimeFormatted)\n";
             $results['skipped']++;
-            $photos[$photoIndex]['updated'] = false;
+            $new_photos[$photoIndex]['updated'] = false;
             continue;
         }
         
@@ -173,20 +178,22 @@ function matchPhotosToDivesAndUpdate($photos, $divesData) {
         if (updateXmpWithData($photo['xmp'], $depth, $matchingDive['gps_data'])) {
             echo "✅ UPDATED: $filename - Depth: " . round($depth, 2) . "m (dive: " . $matchingDive['fit_file'] . ", time diff: " . $timeDifference . "s, photo time: $photoTimeFormatted), dive timestamp: $closestTimestamp\n";
             $results['updated']++;
-            $photos[$photoIndex]['updated'] = true;
+            $new_photos[$photoIndex]['updated'] = true;
         } else {
             echo "❌ FAILED: $filename - Could not update XMP (photo time: $photoTimeFormatted)\n";
             $results['failed']++;
-            $photos[$photoIndex]['updated'] = false;
+            $new_photos[$photoIndex]['updated'] = false;
         }
     }
     
-    // Generate report after processing
-    global $generateReport, $reportFile;
-    if ($generateReport) {
-        generatePhotoReport($photos, $reportFile);
+    // Generate final report if enabled
+    if ($CONF['generateReport']) {
+        echo "\n========================================\n";
+        echo "GENERATING FINAL REPORT\n";
+        echo "========================================\n";
+        generatePhotoReport($new_photos, $CONF['reportFile']);
+        echo "========================================\n";
     }
-    
     return $results;
 }
 
@@ -624,19 +631,12 @@ function generatePhotoReport($photos, $reportFile) {
         $path = dirname($photo['xmp']);
         $photoTime = $photo['time']->format('Y-m-d H:i:s e');
         
-        // Default values with proper null checking
-        $depth = $photo['depth'] ?? '';
-        $gpsLat = $photo['gps_lat'] ?? '';
-        $gpsLon = $photo['gps_lon'] ?? '';
-        $fitFile = $photo['fit_file'] ?? '';
-        $diveStart = $photo['dive_start'] ?? '';
-        $diveEnd = $photo['dive_end'] ?? '';
-        $timeDiff = $photo['time_diff'] ?? '';
-        $temp = $photo['temp'] ?? '';
-        
         // Safely check if matched_dive exists before using it
-        $matchedDive = isset($photo['matched_dive']) ? ($photo['matched_dive'] ? 'YES' : 'NO') : 'UNKNOWN';
-        
+        $matchedDive = 'NO';
+        if ($photo['matched_dive']) {
+            $matchedDive = 'YES';
+        }
+
         $status = 'NOT PROCESSED';
         $notes = '';
         
@@ -676,14 +676,14 @@ function generatePhotoReport($photos, $reportFile) {
             $filename,
             $path,
             $photoTime,
-            $depth,
-            $temp,
-            $gpsLat,
-            $gpsLon,
-            $fitFile,
-            $diveStart,
-            $diveEnd,
-            $timeDiff,
+            $photo['temp'],
+            $photo['depth'],
+            $photo['gps_lat'],
+            $photo['gps_lon'],
+            $photo['fit_file'],
+            $photo['dive_start'],
+            $photo['dive_end'],
+            $photo['time_diff'],
             $hasExistingDepth ? 'YES' : 'NO',
             $hasExistingGPS ? 'YES' : 'NO',
             $matchedDive,

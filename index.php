@@ -14,9 +14,6 @@ checks();
 date_default_timezone_set($CONF['timezone']);
 $timezoneObj = new DateTimeZone($CONF['timezone']);
 
-// Include the FitFileHandler class
-include($CONF['fit_file_handlerclass']); // Make sure this path is correct
-
 // Report header
 echo "========================================\n";
 echo "DIVE PHOTO PROCESSING STARTED\n";
@@ -73,14 +70,3 @@ echo "Photos failed: " . $results['failed'] . "\n";
 echo "========================================\n";
 echo "PROCESSING COMPLETED!\n";
 echo "========================================\n";
-
-// Generate final report if enabled
-if ($CONF['generateReport']) {
-    echo "\n========================================\n";
-    echo "GENERATING FINAL REPORT\n";
-    echo "========================================\n";
-    generatePhotoReport($allPhotos, $CONF['reportFile']);
-    echo "========================================\n";
-}
-
-var_dump($fitHandler->debug_output);
