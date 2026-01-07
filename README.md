@@ -18,6 +18,7 @@ This script can update thousands of photos across hundreds of dives in one sessi
 It will recurse subdirectories for FIT files as well as for photos. Generated CSV and JSON files will all be stored in the same directory. 
 
 ## installation
+* install JAVA (e.g. here https://learn.microsoft.com/en-us/java/openjdk/download )
 * download the code here
 * download the Garmin FitCVSTool.jar from https://developer.garmin.com/fit/download/
 * save the Garmin .jar in the same folder as the code here.
