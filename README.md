@@ -14,6 +14,9 @@ The information is then visible in lightroom and can be included in JPG metadata
 Many programs will show the geotagged images correctly on maps.
 You will know at which depth you took which photo.
 
+This script can update thousands of photos across hundreds of dives in one session. 
+It will recurse subdirectories for FIT files as well as for photos. Generated CSV and JSON files will all be stored in the same directory. 
+
 ## installation
 * download the code here
 * download the Garmin FitCVSTool.jar from https://developer.garmin.com/fit/download/
