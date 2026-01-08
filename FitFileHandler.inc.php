@@ -197,6 +197,8 @@ class FitFileHandler {
         $command = "java -jar " . escapeshellarg($this->fitCsvToolPath) . " " . escapeshellarg($fitFile);
         
         $this->debug_output[] = "    Executing: $command\n";
+        $returnCode = false;
+        $output = false;
         exec($command, $output, $returnCode);
         
         if ($returnCode !== 0) {
@@ -238,13 +240,17 @@ class FitFileHandler {
         while (($line = fgets($handle)) !== false) {
             $lineCount++;
             $line = trim($line);
-            if (empty($line)) continue;
-            
+            if (empty($line)) {
+                continue;
+            }
+
             $parts = str_getcsv($line);
             
             // Skip empty lines or malformed lines
-            if (count($parts) < 3) continue;
-            
+            if (count($parts) < 3) {
+                continue;
+            }
+
             // Parse headers
             if ($parts[0] === 'Type' && $parts[1] === 'Local Number') {
                 $headers = $parts;
@@ -343,10 +349,10 @@ class FitFileHandler {
      */
     private function decimalToDMS($decimal, $isLatitude) {
         $direction = $isLatitude ? ($decimal >= 0 ? 'N' : 'S') : ($decimal >= 0 ? 'E' : 'W');
-        $decimal = abs($decimal);
+        $abs_decimal = abs($decimal);
         
-        $degrees = floor($decimal);
-        $minutesDecimal = ($decimal - $degrees) * 60;
+        $degrees = floor($abs_decimal);
+        $minutesDecimal = ($abs_decimal - $degrees) * 60;
         $minutes = floor($minutesDecimal);
         $seconds = round(($minutesDecimal - $minutes) * 60, 5);
         
