@@ -1,5 +1,5 @@
 # garmin_dive_imgsync
-syncronize garmin dive data into Lightroom images
+syncronize garmin dive data into RAW images with the help of Adobe Lightroom
 
 ## the problem:
 * You have a dive watch that records depth and GPS for every dive
