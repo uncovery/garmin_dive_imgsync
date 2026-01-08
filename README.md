@@ -9,10 +9,11 @@ syncronize garmin dive data into RAW images with the help of Adobe Lightroom
 ## what this does:
 This script helps you write the GPS and depth data from your garmin dive watch into
 the photo metadata for each photo you took during a dive, fully automated. 
-It also creates JSON files from your dive with selected dive data for further data processing.
 The information is then visible in lightroom and can be included in JPG metadata on export. 
 Many programs will show the geotagged images correctly on maps.
 You will know at which depth you took which photo.
+
+It also creates JSON files from your dive with selected dive data for further data processing.
 
 This script can update thousands of photos across hundreds of dives in one session. 
 It will recurse subdirectories for FIT files as well as for photos. Generated CSV and JSON files will all be stored in the same directory. 
