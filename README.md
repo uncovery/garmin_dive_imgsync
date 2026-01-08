@@ -1,7 +1,7 @@
 # garmin_dive_imgsync
 syncronize garmin dive data into Lightroom images
 
-# the problem:
+## the problem:
 * You have a dive watch that records depth and GPS for every dive
 * You take pictures that could be geotagged with that GPS data and the depth information
 * doing this manually is tedious.
@@ -17,12 +17,15 @@ You will know at which depth you took which photo.
 This script can update thousands of photos across hundreds of dives in one session. 
 It will recurse subdirectories for FIT files as well as for photos. Generated CSV and JSON files will all be stored in the same directory. 
 
+## requirements
+* the Windows Linux subsystem (WSL) (see here: https://learn.microsoft.com/en-us/windows/wsl/install)
+* PHP And Java installed on WSL
+* Adobe Lightroom to create XMP sidecar files
+
 ## installation
-* install JAVA (e.g. here https://learn.microsoft.com/en-us/java/openjdk/download )
 * download the code here
 * download the Garmin FitCVSTool.jar from https://developer.garmin.com/fit/download/
 * save the Garmin .jar in the same folder as the code here.
-* install the Windows Linux Subsystem (see here: https://learn.microsoft.com/en-us/windows/wsl/install)
 * rename the config.inc.default.php to config.inc.php
 * create a dedicated folder for FIT, CSV and JSON files (can be the same or 3 different folders)
 * edit the config file to match your environment
@@ -42,3 +45,13 @@ It will recurse subdirectories for FIT files as well as for photos. Generated CS
 * check the metadata and the depth and GPS information in your file info.
 * done
 
+## why this way?
+I wrote this for my own use. Adobe Lightroom is a requirement because that's (to 
+my knowledge) the only way how to get the (EXIF) image data out of maker-specific RAW 
+files (e.g. CR3 for Canon) and then write them back into the files.
+
+## contributions
+If you want to see this done for other dive computers or to be used without Lightroom
+(this would then only work for JPEG to my knowledge), please feel free to contribute 
+the code. I am happy to add it here. Please make sure to provide sample dive data from 
+your computer for testing.
